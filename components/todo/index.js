@@ -1,60 +1,77 @@
 class TodoComponent {
-    constructor(componentElement) {
-        // Assign outer TodoComponent Element. We should do all of our searching within here, not `document`.
-        this.componentElement = componentElement;
-        // Get the todos container element
-        this.todosElement;
-        // instantiate the Todos class with it
-        this.todos;
-        // Do the same with form Element
-        this.formElement;
-        // I've given you a hint here. Look at the TodoForm constructor.
-        this.form; 
-    }
+  constructor(componentElement) {
+    // Assign outer TodoComponent Element. We should do all of our searching within here, not `document`.
+    this.componentElement = componentElement;
+    // Get the todos container element
+    this.todosElement = this.componentElement.querySelector(".todos-container");
+    // instantiate the Todos class with it
+    this.todos = new Todos(this.todosElement);
+    // Do the same with form Element
+    this.formElement = this.componentElement.querySelector(".todo-form");
+    // I've given you a hint here. Look at the TodoForm constructor.
+    this.form = new TodoForm(this.formElement, this.todos);
+  }
 }
 
 class Todos {
-    constructor(containerElement) {
-        this.containerElement = containerElement;
-    }
-    addTodo(text) {
-        // Add a todo element to the container, and instantiate its class
-    }
+  constructor(containerElement) {
+    this.containerElement = containerElement;
+  }
+  addTodo(text) {
+    // Add a todo element to the container, and instantiate its class
+    const newElement = document.createElement("p");
+    const newText = document.createTextNode(text);
+    newElement.appendChild(newText);
+
+    const item = new Todo(newElement);
+    this.containerElement.append(item.todoElement);
+  }
 }
 
 class Todo {
-    constructor(todoElement) {
-        this.todoElement = todoElement;
-        // What do we need to add to make our element to make `this.toggle` work?
-    }
-    toggle() {
-        // Toggle the element being 'done'
-    }
+  constructor(todoElement) {
+    this.todoElement = todoElement;
+
+    // What do we need to add to make our element to make `this.toggle` work?
+    this.todoElement.addEventListener("click", event => {
+      this.toggle();
+    });
+  }
+  toggle() {
+    // Toggle the element being 'done'
+    this.todoElement.classList.toggle("done");
+  }
 }
 
 class TodoForm {
-    // Note the second argument, `todos`. It is an instance of the `Todos` class
-    constructor(formElement, todos) {
-        this.formElement = formElement;
-        this.todos = todos;
-        this.input = this.formElement.querySelector('input');
-        this.addButton = this.formElement.querySelector('.add');
+  // Note the second argument, `todos`. It is an instance of the `Todos` class
+  constructor(formElement, todos) {
+    this.formElement = formElement;
+    this.todos = todos;
+    this.input = this.formElement.querySelector("input");
+    this.addButton = this.formElement.querySelector(".add");
 
-        // stretch - make a button clear all completed todos
-        // this.clearButton;
+    // stretch - make a button clear all completed todos
+    // this.clearButton;
 
-        // https://developer.mozilla.org/en-US/docs/Web/API/HTMLFormElement/submit_event
-    }
-    submitTodo() {
-        // https://developer.mozilla.org/en-US/docs/Web/HTML/Element/input
-        // see 'value'. 
+    // https://developer.mozilla.org/en-US/docs/Web/API/HTMLFormElement/submit_event
 
-        // We need to actually add a todo to the page. If only we had access to
-        // a class that has a member function that does just that.
-    }
+    this.addButton.addEventListener("click", event => {
+      event.preventDefault();
+      this.submitTodo();
+    });
+  }
+
+  submitTodo() {
+    // https://developer.mozilla.org/en-US/docs/Web/HTML/Element/input
+    // see 'value'.
+    // We need to actually add a todo to the page. If only we had access to
+    // a class that has a member function that does just that.
+    this.todos.addTodo(this.input.value);
+  }
 }
 
 // Instantiate TodoComponent Classes
-document.querySelectorAll('.todo-component')
-    .forEach(todoElem => new TodoComponent(todoElem));
-
+document
+  .querySelectorAll(".todo-component")
+  .forEach(todoElem => new TodoComponent(todoElem));
